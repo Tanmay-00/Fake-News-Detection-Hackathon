@@ -1,0 +1,55 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "A user of the Alitheia platform.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "avatarUrl": { "type": "string" }
+      },
+      "required": ["id", "name", "role"]
+    },
+    "Thread": {
+      "title": "Discussion Thread",
+      "description": "A discussion thread in the research hub.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string" },
+        "author": { "$ref": "#/entities/User" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "upvotes": { "type": "number" },
+        "commentCount": { "type": "number" },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["title", "description", "category", "author", "createdAt", "upvotes", "commentCount"]
+    },
+    "Comment": {
+      "title": "Comment",
+      "description": "A technical review or comment on a thread.",
+      "type": "object",
+      "properties": {
+        "text": { "type": "string" },
+        "author": { "$ref": "#/entities/User" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "upvotes": { "type": "number" },
+        "parentId": { "type": "string" }
+      },
+      "required": ["text", "author", "createdAt", "upvotes"]
+    }
+  },
+  "firestore": {
+    "/threads": {
+      "schema": "Thread",
+      "description": "Collection of discussion threads."
+    },
+    "/threads/{threadId}/comments": {
+      "schema": "Comment",
+      "description": "Sub-collection of comments for a specific thread."
+    }
+  }
+}

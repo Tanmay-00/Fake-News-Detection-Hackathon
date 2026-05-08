@@ -1,0 +1,87 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Global Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(data) {
+      return isSignedIn() && data.author.id == request.auth.uid;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Entity Validations
+    function isValidThread(data) {
+      return data.title is string && data.title.size() <= 200 &&
+             data.description is string && data.description.size() <= 2000 &&
+             data.category is string &&
+             data.author.id == request.auth.uid &&
+             data.createdAt == request.time &&
+             data.upvotes == 0 &&
+             data.commentCount == 0;
+    }
+
+    function isValidComment(data) {
+      return data.text is string && data.text.size() <= 1000 &&
+             data.author.id == request.auth.uid &&
+             data.createdAt == request.time &&
+             data.upvotes == 0 &&
+             (!data.keys().hasAll(['parentId']) || (data.parentId is string && data.parentId.size() <= 128));
+    }
+
+    // Threads
+    match /threads/{threadId} {
+      allow list: if true;
+      allow get: if true;
+      
+      allow create: if isSignedIn() && isValidThread(incoming());
+      
+      allow update: if isSignedIn() && (
+        // Action: Edit (Owner only)
+        (isOwner(existing()) && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'description', 'tags']) && 
+         incoming().title is string && incoming().title.size() <= 200 &&
+         incoming().description is string && incoming().description.size() <= 2000) ||
+        // Action: Vote (Anyone signed in)
+        (incoming().diff(existing()).affectedKeys().hasOnly(['upvotes']) && 
+         incoming().upvotes == existing().upvotes + 1 || incoming().upvotes == existing().upvotes - 1) ||
+        // Action: Increment comment count (System/Anyone during comment creation - technically needs better guard)
+        (incoming().diff(existing()).affectedKeys().hasOnly(['commentCount']) && 
+         incoming().commentCount == existing().commentCount + 1)
+      );
+
+      // Comments
+      match /comments/{commentId} {
+        allow list: if true;
+        allow get: if true;
+        
+        allow create: if isSignedIn() && isValidComment(incoming());
+        
+        allow update: if isSignedIn() && (
+          // Action: Edit
+          (isOwner(existing()) && incoming().diff(existing()).affectedKeys().hasOnly(['text']) && 
+           incoming().text is string && incoming().text.size() <= 1000) ||
+          // Action: Vote
+          (incoming().diff(existing()).affectedKeys().hasOnly(['upvotes']) && 
+           incoming().upvotes == existing().upvotes + 1 || incoming().upvotes == existing().upvotes - 1)
+        );
+      }
+    }
+  }
+}
