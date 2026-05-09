@@ -5,12 +5,20 @@ import Loader from "./components/Loader";
 import Hero from "./components/Hero";
 import AnalysisUI from "./components/AnalysisUI";
 import Community from "./components/Community";
+import Sidebar from "./components/Sidebar";
+import AuthModal from "./components/AuthModal";
+import { useAuth } from "./hooks/useAuth";
+import { LogIn, User as UserIcon } from "lucide-react";
 
 export default function App() {
   const [loading, setLoading] = useState(true);
   const [scrolled, setScrolled] = useState(false);
   const [activeView, setActiveView] = useState<"analysis" | "community">("analysis");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  
+  const { user } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,6 +40,16 @@ export default function App() {
             animate={{ opacity: 1 }}
             className="relative"
           >
+            {/* Sidebar */}
+            <Sidebar 
+              isOpen={sidebarOpen} 
+              onClose={() => setSidebarOpen(false)} 
+              user={user}
+              onNavigate={(view) => setActiveView(view)}
+              activeView={activeView}
+              onAuthOpen={() => setIsAuthModalOpen(true)}
+            />
+
             {/* Navigation */}
             <AnimatePresence>
               {!isAnalyzing && (
@@ -40,7 +58,7 @@ export default function App() {
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: -100, opacity: 0 }}
                   transition={{ duration: 0.5, ease: "easeOut" }}
-                  className={`fixed top-0 inset-x-0 z-[60] transition-all duration-500 py-6 px-8 md:px-16 flex justify-between items-center ${scrolled ? 'bg-surface/80 backdrop-blur-3xl border-b border-white/5 py-4' : ''}`}
+                  className={`fixed top-0 inset-x-0 z-[60] transition-all duration-500 py-6 px-6 md:px-16 flex justify-between items-center ${scrolled ? 'bg-surface/80 backdrop-blur-3xl border-b border-white/5 py-4' : ''}`}
                 >
                   <div className="flex items-center gap-12">
                      <h1 
@@ -73,9 +91,36 @@ export default function App() {
                   </div>
                   
                   <div className="flex items-center gap-6">
-                    <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5 transition-colors cursor-pointer">
-                       <Menu className="w-4 h-4 text-white/60" />
-                    </div>
+                    {!user ? (
+                      <button 
+                        onClick={() => setIsAuthModalOpen(true)}
+                        className="px-6 py-2 rounded-xl bg-white text-black text-xs font-bold uppercase tracking-widest hover:bg-white/90 transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)]"
+                      >
+                         Sign In
+                      </button>
+                    ) : (
+                      <button 
+                         onClick={() => setSidebarOpen(true)}
+                         className="flex items-center gap-3 group"
+                      >
+                         <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5 transition-colors cursor-pointer overflow-hidden">
+                            {user.avatar ? (
+                              <img src={user.avatar} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              <UserIcon className="w-4 h-4 text-white/40 group-hover:text-white transition-colors" />
+                            )}
+                         </div>
+                         <span className="hidden sm:block text-[10px] text-white/40 font-mono tracking-widest uppercase truncate max-w-[80px]">{user.name}</span>
+                      </button>
+                    )}
+                    
+                    <button 
+                      onClick={() => setSidebarOpen(true)}
+                      className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5 transition-colors cursor-pointer group"
+                      aria-label="Toggle Navigation Dashboard"
+                    >
+                       <Menu className="w-4 h-4 text-white/60 group-hover:text-white transition-colors" />
+                    </button>
                   </div>
                 </motion.nav>
               )}
@@ -103,11 +148,16 @@ export default function App() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                   >
-                    <Community />
+                    <Community onAuthOpen={() => setIsAuthModalOpen(true)} />
                   </motion.div>
                 )}
               </AnimatePresence>
             </main>
+
+            <AuthModal 
+              isOpen={isAuthModalOpen} 
+              onClose={() => setIsAuthModalOpen(false)} 
+            />
 
              <footer className="py-24 md:py-32 border-t border-white/5 px-6 md:px-16 lg:px-24 relative overflow-hidden bg-surface-container-lowest">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[400px] bg-blue-500/5 rounded-full blur-[150px] pointer-events-none" />
@@ -194,6 +244,7 @@ export default function App() {
                    </div>
                 </div>
              </footer>
+
           </motion.div>
         )}
       </AnimatePresence>

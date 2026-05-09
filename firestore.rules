@@ -46,6 +46,18 @@ service cloud.firestore {
              (!data.keys().hasAll(['parentId']) || (data.parentId is string && data.parentId.size() <= 128));
     }
 
+    function isValidUser(data) {
+      return data.name is string && data.name.size() <= 50 &&
+             (data.role == "Researcher" || data.role == "Expert" || data.role == "Admin") && 
+             (!data.keys().hasAll(['avatar']) || (data.avatar is string && data.avatar.size() <= 1000));
+    }
+
+    // Users
+    match /users/{userId} {
+      allow read: if true;
+      allow write: if isSignedIn() && request.auth.uid == userId && isValidUser(incoming());
+    }
+
     // Threads
     match /threads/{threadId} {
       allow list: if true;

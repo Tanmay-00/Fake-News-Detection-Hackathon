@@ -1,6 +1,7 @@
 import { motion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { Search } from "lucide-react";
+import { cn } from "../lib/utils";
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -106,7 +107,7 @@ export default function Hero() {
 
         {/* The Detective's Magnifying Glass (HUD Frame) */}
         <motion.div 
-          className="fixed pointer-events-none z-50 w-72 h-72 rounded-full border-[1.5px] border-white/30 hidden lg:flex items-center justify-center overflow-visible"
+          className="fixed pointer-events-none z-50 w-72 h-72 rounded-full border-[1.5px] border-white/30 flex items-center justify-center overflow-visible"
           style={{ 
             left: mousePos.x, 
             top: mousePos.y, 

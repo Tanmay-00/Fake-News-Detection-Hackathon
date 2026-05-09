@@ -72,28 +72,28 @@ export default function Dashboard({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         {/* Main Verdict Card */}
-        <div className={`col-span-1 lg:col-span-4 glass-card rounded-3xl p-8 flex flex-col justify-between relative overflow-hidden ${borderClass}`}>
-           <div className="absolute top-0 right-0 p-8 opacity-10 blur-[40px] pointer-events-none" aria-hidden="true">
+        <div className={`col-span-1 lg:col-span-4 glass-card rounded-3xl p-10 flex flex-col justify-between relative overflow-hidden ${borderClass}`}>
+           <div className="absolute top-0 right-0 p-10 opacity-10 blur-[40px] pointer-events-none" aria-hidden="true">
               {icon}
            </div>
-           <div className="space-y-6">
-              <div className="p-3 bg-white/5 rounded-2xl w-fit" aria-hidden="true">
+           <div className="space-y-8">
+              <div className="p-4 bg-white/5 rounded-2xl w-fit" aria-hidden="true">
                 {icon}
               </div>
               <div aria-live="polite">
-                <div className="text-label-caps text-white/40 mb-1">AI Verdict</div>
-                <h3 className={`text-3xl font-light ${colorClass}`}>{result.verdict}</h3>
+                <div className="text-label-caps text-white/40 mb-2">AI Verdict</div>
+                <h3 className={`text-4xl font-light ${colorClass}`}>{result.verdict}</h3>
               </div>
               
-              <div className="space-y-4">
+              <div className="space-y-6">
                  <div className="flex justify-between items-end">
                     <span id="confidence-label" className="text-label-caps text-white/30">Confidence Score</span>
-                    <span className="text-2xl font-thin">{result.confidence}%</span>
+                    <span className="text-3xl font-thin tracking-tighter">{result.confidence}%</span>
                  </div>
                  <div 
-                  className="w-full h-1 bg-white/5 rounded-full overflow-hidden"
+                  className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden"
                   role="progressbar"
                   aria-labelledby="confidence-label"
                   aria-valuenow={result.confidence}
@@ -109,9 +109,9 @@ export default function Dashboard({
               </div>
            </div>
 
-           <div className="grid grid-cols-2 gap-4 mt-12 bg-black/20 p-4 rounded-2xl" role="group" aria-label="Key Indicators">
+           <div className="grid grid-cols-2 gap-4 mt-16 bg-black/20 p-6 rounded-2xl" role="group" aria-label="Key Indicators">
               <div>
-                <div id="bias-label" className="text-[10px] text-white/30 uppercase tracking-wider mb-1">Bias Rating</div>
+                <div id="bias-label" className="text-[10px] text-white/30 uppercase tracking-wider mb-2">Bias Rating</div>
                 <div 
                   className="h-1 bg-white/5 rounded-full"
                   role="progressbar"
@@ -124,7 +124,7 @@ export default function Dashboard({
                 </div>
               </div>
               <div>
-                <div id="emotion-label" className="text-[10px] text-white/30 uppercase tracking-wider mb-1">Emotion</div>
+                <div id="emotion-label" className="text-[10px] text-white/30 uppercase tracking-wider mb-2">Emotion</div>
                 <div 
                   className="h-1 bg-white/5 rounded-full"
                   role="progressbar"
@@ -140,24 +140,24 @@ export default function Dashboard({
         </div>
 
         {/* Summary & Analysis */}
-        <div className="col-span-1 lg:col-span-8 glass-card rounded-3xl p-10 space-y-10">
-           <div className="space-y-4">
-              <h4 className="text-label-caps text-white/40">Intelligence Summary</h4>
-              <div className="text-xl font-light leading-relaxed prose prose-invert max-w-none">
+        <div className="col-span-1 lg:col-span-8 glass-card rounded-3xl p-12 space-y-12">
+           <div className="space-y-6">
+              <h4 className="text-label-caps text-white/40 tracking-[0.2em] mb-2">Intelligence Summary</h4>
+              <div className="text-2xl font-light leading-relaxed prose prose-invert max-w-none prose-p:leading-relaxed">
                  <ReactMarkdown>{result.summary}</ReactMarkdown>
               </div>
            </div>
 
-           <div className="h-[1px] bg-white/5" aria-hidden="true" />
+           <div className="h-[1px] bg-white/10" aria-hidden="true" />
 
-           <div className="space-y-6 text-sm font-light leading-relaxed text-white/60">
-              <h4 className="text-label-caps text-white/40">Contextual Reasoning</h4>
-              <p>{result.context}</p>
+           <div className="space-y-8">
+              <h4 className="text-label-caps text-white/40 tracking-[0.2em]">Contextual Reasoning</h4>
+              <p className="text-base font-light leading-relaxed text-white/60 max-w-3xl">{result.context}</p>
            </div>
            
-           <div className="flex flex-wrap gap-3" aria-label="Extracted Claims">
+           <div className="flex flex-wrap gap-4 pt-4" aria-label="Extracted Claims">
               {result.claims.slice(0, 3).map((claim, i) => (
-                <div key={i} className="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[11px] text-white/60">
+                <div key={i} className="px-5 py-2.5 bg-white/5 border border-white/10 rounded-full text-[11px] text-white/50 hover:text-white transition-colors cursor-default">
                    {claim}
                 </div>
               ))}
@@ -283,21 +283,42 @@ export default function Dashboard({
       </section>
 
       {/* Community Section */}
-      <section className="p-10 border border-white/5 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-8" aria-labelledby="community-footer-title">
+      <section className="p-10 border border-white/5 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-8 bg-blue-500/[0.02]" aria-labelledby="community-footer-title">
          <div className="space-y-2">
-            <h4 id="community-footer-title" className="text-lg font-light flex items-center gap-2"><Users className="w-5 h-5 text-white/40" aria-hidden="true" /> Alitheia Community</h4>
-            <p className="text-sm text-white/40 font-light">Join 12,400+ researchers currently reviewing this intelligence thread.</p>
+            <h4 id="community-footer-title" className="text-lg font-light flex items-center gap-2">
+              <Users className="w-5 h-5 text-white/40" aria-hidden="true" /> 
+              Alitheia Research Network
+            </h4>
+            <p className="text-sm text-white/40 font-light max-w-md">
+              {result.verdict === "Likely True" 
+                ? "This intelligence has been verified by our multi-agent core. Join the discussion to add your peer-review." 
+                : "This claim shows high dissonance. Adversarial agents are currently reviewing historical contexts."}
+            </p>
          </div>
-         <div className="flex gap-4">
-            <button className="px-6 py-3 glass-card rounded-xl text-sm font-light hover:bg-white/5 transition-all flex items-center gap-2">
-               <Share2 className="w-4 h-4" aria-hidden="true" /> Share Thread
-            </button>
+         <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
             <button 
               onClick={onCommunity}
-              className="px-6 py-3 bg-white text-black rounded-xl text-sm font-medium hover:bg-white/90 transition-all font-sans"
-              aria-label="Join the community discussion about these results"
+              className="px-8 py-4 bg-white text-black rounded-xl text-sm font-medium hover:bg-white/90 transition-all flex-1 text-center"
             >
-               Join Discussion
+               Access Hub
+            </button>
+            <button 
+              onClick={() => {
+                const shareData = {
+                  title: 'Alitheia Intelligence Report',
+                  text: `Alitheia Analysis: ${result.verdict} (${result.confidence}% Confidence). ${result.summary}`,
+                  url: window.location.href
+                };
+                if (navigator.share) {
+                  navigator.share(shareData);
+                } else {
+                  navigator.clipboard.writeText(`${shareData.text}\n\nRead full report at: ${shareData.url}`);
+                  alert("Analysis link copied to clipboard.");
+                }
+              }}
+              className="px-8 py-4 glass-card border border-white/10 rounded-xl text-sm font-light hover:bg-white/5 transition-all text-white/60 flex-1 text-center"
+            >
+               Share Report
             </button>
          </div>
       </section>

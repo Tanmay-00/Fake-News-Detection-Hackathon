@@ -50,6 +50,10 @@
     "/threads/{threadId}/comments": {
       "schema": "Comment",
       "description": "Sub-collection of comments for a specific thread."
+    },
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile information."
     }
   }
 }

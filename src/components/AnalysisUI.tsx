@@ -63,7 +63,7 @@ export default function AnalysisUI({ onCommunity, onAnalyzingChange }: { onCommu
   };
 
   return (
-    <section className="min-h-screen py-24 px-8 max-w-6xl mx-auto relative z-10" aria-labelledby="analysis-title">
+    <section className="min-h-screen pt-40 pb-32 px-6 md:px-16 max-w-screen-2xl mx-auto relative z-10" aria-labelledby="analysis-title">
       <div className="ambient-glow top-0 left-1/4 w-[500px] h-[500px] bg-white/5 opacity-10" />
       
       {!result || isAnalyzing ? (
